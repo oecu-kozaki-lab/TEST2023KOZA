@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>アノテーションSample:Ex.1-2</title>
+<script src="camera.js"></script>
+<script>
+window.addEventListener('load', () => {
+	const anotateButton = document.getElementById('anotate');
+	const resultArea = document.getElementById('result_div');
+    
+	anotateButton.addEventListener('click', () => {
+		var textINPUT = document.getElementById('input_text').value;
+
+		for (var i=0;i<data.length;i++){
+			textINPUT = textINPUT.replaceAll(data[i].itemLabel,
+                '<b><a href="'+data[i].item	+'" target="kg">'
+                +data[i].itemLabel+'</a></b>');
+		}	
+
+        resultArea.innerHTML = '<H2>アノテーション結果</H2>'
+			+ textINPUT + '<br><H2>リンク先の表示</H2>'
+			+'<iframe id="kg" name="kg" width=900" height="500"></iframe>;';	
+	}, false);
+}, false);
+</script>
+</head>
+
+<body>
+<h1>アノテーションSample:Ex.1-2</h1>
+<hr>
+<textarea id="input_text" cols="100" rows="5">
+    ハイエンドの映像製作用に特化された設計のビデオカメラを使用する。これらは大型の撮像素子を具備し、フレームレートを選択でき、低圧縮や非圧縮の記録を選択可能であり、高品質の光学系を使用できる。また、色の表現においても帯域が広くなっている。いくつかは購入出来ず貸出される事によってのみ使用できる。
+
+    デジタルシネマカメラの一例:
+    
+    ARRI ALEXA（英語版）
+    RED Digital Cinema
+    ソニー CineAlta
+    パナソニック VARICAM
+    キヤノン CINEMA EOS SYSTEM（英語版）
+    トムソン バイパー
+    パナビジョン ジェネシス
+    アリフレックス D-20
+    ダルサ オリジン
+    ブラックマジックデザイン    
+</textarea>
+<br>
+<button id="anotate">アノテーション実行</button>
+<div id="result_div"></div>
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>SPARQLサンプル</title>
+
+<script>
+window.addEventListener('load', async() => {
+	const endpoint = "https://query.wikidata.org/sparql";
+	const textArea = document.getElementById('query_area');
+	const sendButton = document.getElementById('send');
+	const resultArea = document.getElementById('result_div'); 
+ 
+    var param = location.search;
+    if(param!=""){
+        var qid = param.replace("?id=","");
+        document.getElementById('INPUT').value = qid;
+    }
+
+	//sendButton.addEventListener('click', async () => {
+		var textINPUT = document.getElementById('INPUT').value;
+        const query = textArea.value.replace( '#INPUT#', textINPUT );
+		try {
+            resultArea.innerHTML="検索中...";
+			const result = await sendQuery(endpoint, query);
+			if (!result.ok) {
+                resultArea.innerText = "クエリエラーが発生しました";
+				return;
+			}		
+			const resultData = await result.json();	
+            showResult(resultData);
+		} catch (e) {
+			 alert(e.message);
+			throw e;
+		}
+	//}, false);
+}, false);
+
+function showResult(resultData){
+    const data = resultData.results.bindings;
+    var i=0;
+    var len = data.length;
+    var mesText = "" ;
+    while(i < len){
+        if(data[i]['oLabel']!=null){
+            mesText += data[i]['oLabel'].value+'<br>';
+        }
+        i++;				
+    }
+    const resultArea = document.getElementById('result_div');
+    resultArea.innerHTML='<h2>設立日</h2>'+mesText;
+}
+/*
+ * endpointで指定されたSPARQLエンドポイントにクエリを送信
+ */
+function sendQuery(endpoint, sparql) {
+	const url = endpoint + "?" + "query="+encodeURIComponent(sparql)+"&output=json"
+	const headers = {
+		Accept: 'application/sparql-results+json'
+	}
+	return fetch(url, {
+		method: 'GET',
+		headers,
+		mode: 'cors',
+		cache: 'no-cache',
+	});
+}
+</script>
+</head>
+
+<body>
+<h1>SPARQLサンプル</h1>
+<hr>
+<div style="display:none" >
+ID:<input type="text" id="INPUT" size="20" value="Q2498553"></label><br>
+<textarea id="query_area" cols="80" rows="10">
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+   
+SELECT DISTINCT ?o ?oLabel
+WHERE { 
+wd:#INPUT# wdt:P571 ?o.
+SERVICE wikibase:label { bd:serviceParam wikibase:language "ja,en". }
+}
+</textarea>
+<br>
+<button id="send">クエリ実行</button>
+</div>
+<div id="result_div"></div>
+</body>
+
+</html>
